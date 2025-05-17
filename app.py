@@ -16,8 +16,8 @@ groq_api_key=os.getenv("GROQ_API_KEY")
 
 def setup_llm_chain(topic="technology"):
     prompt = ChatPromptTemplate.from_messages([
-        ("system","You are a joking AI. Give me only ONE funny joke on the given topic"),
-        ("user", f"generate a joke on the topic: {topic}")
+        ("system","You are a funny AI with a sense of humor. Give exactly ONE clever joke about the given topic."),
+        ("user", f"Make a joke on the topic: {topic}")
     ])
 
     llm = ChatGroq(
@@ -28,13 +28,13 @@ def setup_llm_chain(topic="technology"):
     return prompt|llm|StrOutputParser()
 
 async def start(update:Update, context:ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Hi! Mention me with a topic like '@palak_ai_bot python' to get a joke")
+    await update.message.reply_text("Hey! Just tag me with any topic like '@palak_ai_bot books' and I’ll crack a joke for you!")
 
 async def help_command(update:Update, context:ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Mention with a topic like '@palak_ai_botven python', to get some funny jokes")
+    await update.message.reply_text("Need a laugh? Tag me with any topic using '@palak_ai_bot your_topic_here' and I’ll send you a joke!")
 
 async def generate_joke(update:Update, context:ContextTypes.DEFAULT_TYPE, topic: str):
-    await update.message.reply_text(f"Generating a joke about {topic}")
+    await update.message.reply_text(f"Cooking up a joke about {topic}...")
     joke=setup_llm_chain(topic).invoke({}).strip()
     await update.message.reply_text(joke)
 
@@ -48,7 +48,7 @@ async def handle_message(update:Update, context:ContextTypes.DEFAULT_TYPE):
             await generate_joke(update,context, match.group(1).strip())
 
         else:
-            await update.message.reply_text("Please specify a topic after mentioning me")
+            await update.message.reply_text("Oops! You tagged me, but didn’t give a topic. Try something like '@palak_ai_bot coffee'")
 
 def main():
     token = os.getenv("TELEGRAM_API_KEY")
